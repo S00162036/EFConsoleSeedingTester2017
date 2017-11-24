@@ -1,5 +1,5 @@
 ﻿
-using EFConsoleApp.ClubModel;
+using ClubModel;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;

@@ -10,7 +10,7 @@ using System.Data.Entity.Migrations;
 using System.Reflection;
 using System.IO;
 using CsvHelper;
-using EFConsoleApp.ClubModel;
+//using EFConsoleApp.ClubModel;
 
 namespace EFConsoleApp
 {
@@ -126,8 +126,11 @@ namespace EFConsoleApp
                 {
                     CsvReader csvReader = new CsvReader(reader);
                     csvReader.Configuration.HasHeaderRecord = false;
-                    var courses = csvReader.GetRecords<Course>().ToArray();
-                    context.Courses.AddOrUpdate(c => new { c.CourseCode, c.CourseName }, courses );
+                    var courseData = csvReader.GetRecords<CourseData>().ToArray();
+                    foreach (var dataItem in courseData)
+                    {
+                        context.Courses.AddOrUpdate(c => new { c.CourseCode, c.CourseName }, new Course { CourseCode = dataItem.CourseCode, CourseName = dataItem.CourseName, Year = dataItem.Year});
+                    }
                 }
             }
             context.SaveChanges();
