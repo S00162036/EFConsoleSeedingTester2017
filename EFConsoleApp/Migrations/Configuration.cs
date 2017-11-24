@@ -1,4 +1,4 @@
-namespace EFConsoleApp.Migrations
+/*namespace EFConsoleApp.Migrations
 {
     using System;
     using System.Data.Entity;
@@ -18,3 +18,4 @@ namespace EFConsoleApp.Migrations
         }
     }
 }
+*/

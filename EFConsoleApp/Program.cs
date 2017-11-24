@@ -10,6 +10,7 @@ using System.Data.Entity.Migrations;
 using System.Reflection;
 using System.IO;
 using CsvHelper;
+using EFConsoleApp.ClubModel;
 
 namespace EFConsoleApp
 {
@@ -113,6 +114,23 @@ namespace EFConsoleApp
                 .Select(s => s.StudentID.ToString()).Take(10).ToList();
             // return the selected students as a relaized list
             return context.Students.Where(s => subset.Contains(s.StudentID)).ToList();
+        }
+
+        public static void SeedCourses(ClubContext context)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string resourceName = "EFConsoleApp.Migrations.Courses.csv";
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                {
+                    CsvReader csvReader = new CsvReader(reader);
+                    csvReader.Configuration.HasHeaderRecord = false;
+                    var courses = csvReader.GetRecords<Course>().ToArray();
+                    context.Courses.AddOrUpdate(c => new { c.CourseCode, c.CourseName }, courses );
+                }
+            }
+            context.SaveChanges();
         }
     }
 }
