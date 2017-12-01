@@ -23,6 +23,7 @@ namespace EFConsoleApp
             {
                 SeedClub(context);
                 SeedStudents(context);
+                SeedCourses(context);
             }
         }
 
@@ -81,6 +82,30 @@ namespace EFConsoleApp
             context.SaveChanges();
         }
 
+        private static void SeedCourseStudents(ClubContext context)
+        {
+            #region club 1
+            context.Courses.AddOrUpdate(c => c.CourseName,
+
+            new Course
+            {
+                CourseName = "Mechatronics",
+                Year = Convert.ToString(DateTime.Now),
+                CourseId = -1
+            });
+            #endregion
+            #region course 2
+            context.Courses.AddOrUpdate(c => c.CourseName,
+            new Course
+            {
+                CourseName = "Biology",
+                Year = Convert.ToString(DateTime.Now),
+                CourseId = -1
+            });
+            #endregion
+            context.SaveChanges();
+        }
+
         public static void SeedStudents(ClubContext context)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -114,6 +139,17 @@ namespace EFConsoleApp
             return context.Students.Where(s => subset.Contains(s.StudentID)).ToList();
         }
 
+        public static List<Course> GetCourses(ClubContext context)
+        {
+            // Create a random list of student ids
+            var randomCourse = context.Courses.Select(c => new { c.CourseCode, r = Guid.NewGuid() });
+            // sort them and take 10
+            List<string> subset = randomCourse.OrderBy(s => s.r)
+                .Select(s => s.CourseCode.ToString()).Take(1).ToList();
+            // return the selected students as a relaized list
+            return context.Courses.Where(s => subset.Contains(s.CourseCode)).ToList();
+        }
+
         public static void SeedCourses(ClubContext context)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -127,7 +163,8 @@ namespace EFConsoleApp
                     var courseData = csvReader.GetRecords<CourseData>().ToArray();
                     foreach (var dataItem in courseData)
                     {
-                        context.Courses.AddOrUpdate(c => new { c.CourseCode, c.CourseName }, new Course { CourseCode = dataItem.CourseCode, CourseName = dataItem.CourseName, Year = dataItem.Year});
+                        context.Courses.AddOrUpdate(c => new { c.CourseCode, c.CourseName },
+                        new Course { CourseCode = dataItem.CourseCode, CourseName = dataItem.CourseName, Year = dataItem.Year});
                     }
                 }
             }
